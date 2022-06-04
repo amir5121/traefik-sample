@@ -28,7 +28,7 @@ services:
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
     env_file:
       - .env
-    networks:
-      - traefik-public
+
 networks:
-  traefik-public:
+  default:
+    name: traefik-public
