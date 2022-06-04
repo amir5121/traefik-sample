@@ -4,6 +4,7 @@ services:
   traefik:
     image: "traefik:v2.7"
     container_name: "traefik"
+    restart: always
     command:
       #- "--log.level=DEBUG"
       - "--api.insecure=false"
@@ -17,7 +18,7 @@ services:
       - "traefik.enable=true"
       - "traefik.http.routers.traefik.entrypoints=web"
       - "traefik.http.routers.traefik.service=api@internal"
-      - "traefik.http.routers.api.rule=Host(`traefik.${DOMAIN}`)"
+      - "traefik.http.routers.traefik.rule=Host(`traefik.${DOMAIN}`)"
       - "traefik.http.routers.traefik.middlewares=traefik-auth"
       - "traefik.http.middlewares.traefik-auth.basicauth.users=${DASHBOARD_BASIC_AUTH}"
     ports:
