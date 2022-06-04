@@ -1,0 +1,29 @@
+version: "3.8"
+
+services:
+  traefik:
+    image: "traefik:v2.7"
+    container_name: "traefik"
+    command:
+      #- "--log.level=DEBUG"
+      - "--api.insecure=false"
+      - "--api.dashboard=true"
+      - "--providers.docker=true"
+      - "--providers.docker.exposedbydefault=false"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--providers.docker.defaultrule=Host(`{{ trimPrefix `/` .Name }}.docker.local`)"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.traefik.entrypoints=web"
+      - "traefik.http.routers.traefik.service=api@internal"
+      - "traefik.http.routers.api.rule=Host(`traefik.${DOMAIN}`)"
+      - "traefik.http.routers.traefik.middlewares=traefik-auth"
+      - "traefik.http.middlewares.traefik-auth.basicauth.users=${DASHBOARD_BASIC_AUTH}"
+    ports:
+      - "80:80"
+      - "433:443"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    env_file:
+      - .env
